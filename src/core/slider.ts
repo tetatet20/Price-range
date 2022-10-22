@@ -1,0 +1,3 @@
+class Slider {
+  //excelPage.js
+}
