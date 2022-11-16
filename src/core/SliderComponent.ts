@@ -1,7 +1,10 @@
+import { Dom } from "./Dom";
 import { DomListener } from "./DomListener";
 
 export class SliderComponent extends DomListener {
-  toHTML() {
-    return ''
+  $root: Dom
+  constructor(el: Dom) {
+    super()
+    this.$root = el
   }
 }

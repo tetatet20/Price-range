@@ -1,9 +1,14 @@
+import { Dom } from "../../core/Dom";
 import { SliderComponent } from "../../core/SliderComponent"
 
 export class PointMax extends SliderComponent {
-  // static className = 'point_slider_max'
+  public static className = 'point-slider-max'
+
+  constructor(el: Dom) {
+    super(el)
+  }
   
   toHTML(): string {
-    return '<span class="point-slider-max">';
+    return '<p>5</p>';
   }
 }
