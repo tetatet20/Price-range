@@ -1,4 +1,3 @@
-// new Slider('#app', {
-//   dashboard: DashboardPage,
-//   excel: ExcelPage,
-// })
+import { Slider } from "./src/core/slider";
+
+new Slider('#app',) 
