@@ -1,112 +1,73 @@
 const path = require('path')
-const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 const HTMLWebpackPlugin = require('html-webpack-plugin')
-const CopyPlugin = require('copy-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-// const HtmlWebpackPugPlugin = require('html-webpack-pug-plugin');
-
-const isProd = process.env.NODE_ENV === 'production'
-const isDev = !isProd
-
-const filename = (ext) => isDev ? `bundle.${ext}` : `bundle.[hash].${ext}`
-
-const jsLoaders = () => {
-  const loaders = [
-    {
-      loader: 'babel-loader',
-      options: {
-        presets: ['@babel/preset-env'],
-        plugins: ['@babel/plugin-proposal-class-properties'],
-      },
-    },
-  ]
-
-  // if (isDev) {
-  //   loaders.push('eslint-loader')
-  // }
-
-  return loaders
-}
+const {CleanWebpackPlugin} = require('clean-webpack-plugin')
 
 module.exports = {
-  context: path.resolve(__dirname, 'src'),
+  context: path.resolve(__dirname, './'),
   mode: 'development',
-  entry: ['@babel/polyfill', './index.js'],
+  entry: {
+    main: ['@babel/polyfill', './index.ts'],
+  },
   output: {
-    filename: filename('js'),
-    path: path.resolve(__dirname, 'docs'),
+    filename: '[name].[contenthash].js',
+    path: path.resolve(__dirname, 'dist'),
   },
-  resolve: {
-    extensions: ['.js'],
-    alias: {
-      '@': path.resolve(__dirname, 'src'),
-      '@core': path.resolve(__dirname, 'src/core'),
-    },
-  },
-  devtool: isDev ? 'source-map' : false,
-  devServer: {
-    port: 3000,
-    hot: isDev,
-  },
-  plugins: [
-    // new HtmlWebpackPugPlugin(),
-    new CleanWebpackPlugin(),
-    new HTMLWebpackPlugin({
-      template: './index.html',
-      minify: {
-        removeComments: isProd,
-        collapseWhitespace: isProd,
-      },
-    }),
-    new CopyPlugin({
-      patterns: [
-        {from: path.resolve(__dirname, 'src/favicon.ico'),
-        to: path.resolve(__dirname, 'docs')},
-      ],
-    }),
-    // ([
-    //   {
-    //     from: path.resolve(__dirname, 'src/favicon.ico'),
-    //     to: path.resolve(__dirname, 'dist'),
-    //   },
-    // ]),
-    new MiniCssExtractPlugin({
-      filename: filename('css'),
-    }),
-  ],
   module: {
     rules: [
-  //     {
-  //     test: /\.pug$/,
-  //     use: [
-  //       {
-  //             loader: 'html-loader',
-  //         },
-  //         {
-  //             loader: 'pug-html-loader',
-  //             options: {
-  //                 exports: false,
-  //             },
-  //         },
-  //     ],
-  // },
       {
-        test: /\.s[ac]ss$/i,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-          },
-          'css-loader',
-          'sass-loader',
-        ],
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
       },
       {
-        test: /\.js$/,
+        test: /\.s[ac]ss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader'],
+      },
+      {
+        test: /\.m?js$/,
         exclude: /node_modules/,
-        use: jsLoaders(),
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+            plugins: ['@babel/plugin-proposal-class-properties'],
+          },
+        },
+      },
+      {
+        test: /\.ts$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              '@babel/preset-env',
+              '@babel/preset-typescript',
+            ],
+            plugins: ['@babel/plugin-proposal-class-properties'],
+          },
+        },
+      },
+      {
+      test: /\.ttf$/,
+      use: ['file-loader'],
       },
     ],
   },
+  devServer: {
+    // contentBase: path.join(__dirname, 'dist'),
+    compress: true,
+    port: 9000,
+  },
+  resolve: {
+    extensions: ['.js', '.ts', '.sass'],
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
+  plugins: [
+    new HTMLWebpackPlugin({
+      template: './index.html',
+    }),
+    new CleanWebpackPlugin(),
+  ],
 }
-
-// 07/10
